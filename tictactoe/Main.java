@@ -8,7 +8,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         Main.printBoard(input);
-        System.out.println(gameStatus(input));
+        input = Main.getMove(scanner, input);
+        Main.printBoard(input);
+        // System.out.println(gameStatus(input));
     }
 
     private static void printBoard(String input) {
@@ -17,6 +19,37 @@ public class Main {
         System.out.printf("| %c %c %c |%n", input.charAt(3), input.charAt(4), input.charAt(5));
         System.out.printf("| %c %c %c |%n", input.charAt(6), input.charAt(7), input.charAt(8));
         System.out.println("---------");
+    }
+
+    private static String getMove(Scanner scanner, String input) {
+        int index;
+        char[] chars = input.toCharArray();
+        while (true) {
+            String move = scanner.nextLine();
+            char[] moveChars = move.toCharArray();
+            for (char c : moveChars) {
+                if (!"1234567890 ".contains(String.valueOf(c))) {
+                    System.out.println("You should enter numbers!");
+                    continue;
+                }
+            }
+            String[] coordinates = move.split(" ");
+            int x = Integer.parseInt(coordinates[0]) - 1;
+            int y = Integer.parseInt(coordinates[1]) - 1;
+            if (x < 0 || x > 2 || y < 0 || y > 2) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                continue;
+            }
+            index = x * 3 + y;
+            if (chars[index] != '_') {
+                System.out.println("This cell is occupied!");
+                continue;
+            } else {
+                break;
+            }
+        }
+        chars[index] = 'X';
+        return new String(chars);
     }
 
     private static String gameStatus(String input) {
