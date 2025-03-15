@@ -31,13 +31,14 @@ public class Main {
 
     private static int getMove(Scanner scanner, char[] input) {
         int index;
+        mainLoop:
         while (true) {
             String move = scanner.nextLine();
             char[] moveChars = move.toCharArray();
             for (char c : moveChars) {
                 if (!"1234567890 ".contains(String.valueOf(c))) {
                     System.out.println("You should enter numbers!");
-                    continue;
+                    continue mainLoop;
                 }
             }
             String[] coordinates = move.split(" ");
@@ -50,23 +51,13 @@ public class Main {
             index = x * 3 + y;
             if (input[index] != '_') {
                 System.out.println("This cell is occupied!");
-                continue;
             } else {
-                break;
+                return index;
             }
         }
-        return index;
     }
 
     private static String gameStatus(char[] input) {
-        /*
-        long xs = input.chars().filter(c -> c == 'X').count();
-        long os = input.chars().filter(c -> c == 'O').count();
-        if (Math.abs(xs - os) > 1) {
-            return "Impossible";
-        }
-         */
-
         int[][] lineIndices = {
                 // rows
                 {0, 1, 2},
@@ -80,28 +71,19 @@ public class Main {
                 {0, 4, 8},
                 {2, 4, 6},
         };
-        String[] lines = Arrays
-                .stream(lineIndices)
-                .map(line -> String.format("%c%c%c", input[line[0]], input[line[1]], input[line[2]]))
-                .toArray(String[]::new);
-        long xWins = Arrays.stream(lines).filter(line -> line.equals("XXX")).count();
-        long oWins = Arrays.stream(lines).filter(line -> line.equals("OOO")).count();
-        if (xWins == 1 && oWins == 0) {
-            return "X wins";
-        } else if (xWins == 0 && oWins == 1) {
-            return "O wins";
-        } else if (xWins == 0 && oWins == 0) {
-            if (new String(input).contains("_")) {
-                return "Game not finished";
-            } else {
-                return "Draw";
+        for (int[] indices : lineIndices) {
+            String line = String.format("%c%c%c", input[indices[0]], input[indices[1]], input[indices[2]]);
+            if (line.equals("XXX")) {
+                return "X wins";
+            }
+            if (line.equals("OOO")) {
+                return "O wins";
             }
         }
-        /*
-        else {
-            return "Impossible";
+        if (new String(input).contains("_")) {
+            return "Game not finished";
+        } else {
+            return "Draw";
         }
-         */
-        return "";
     }
 }
